@@ -15,25 +15,41 @@ const AppContext = createContext();
 const AppProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const incresePage = () => {
-        dispatch({ type: "INCREASEPAGE" });
-        takeInputAndMakeApiCall()
-    }
-
-    const decreasePage = () => {
-        dispatch({ type: "DECREASEPAGE" });
-        takeInputAndMakeApiCall()
-    }
-
-    const takeInputAndMakeApiCall = async (input) => {
+    const increasePage = async (value) => {
         dispatch({ type: 'TOGGLELOADING' })
-        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${input}&image_type=photo&page=${state.page}&per_page=12`
+        dispatch({ type: "INCREASEPAGE" });
+        const page = state.page + 1
+        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${value}&image_type=photo&page=${page}&per_page=12`
         const response = await fetch(url);
         const data = await response.json();
+        dispatch({ type: "SETDATA", data })
         window.scrollTo({
             top: 0,
             behavior: "smooth"
-        })
+        });
+        dispatch({ type: 'TOGGLELOADING' });
+    }
+
+    const decreasePage = async (value) => {
+        dispatch({ type: 'TOGGLELOADING' })
+        dispatch({ type: "DECREASEPAGE" });
+        const page = state.page - 1
+        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${value}&image_type=photo&page=${page}&per_page=12`
+        const response = await fetch(url);
+        const data = await response.json();
+        dispatch({ type: "SETDATA", data })
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+        dispatch({ type: 'TOGGLELOADING' });
+    }
+
+    const takeInputAndMakeApiCall = async (input) => {
+        dispatch({ type: 'TOGGLELOADING' });
+        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${input}&image_type=photo&page=${state.page}&per_page=12`
+        const response = await fetch(url);
+        const data = await response.json();
         dispatch({ type: "SETDATA", data })
         dispatch({ type: 'TOGGLELOADING' })
 
@@ -45,7 +61,7 @@ const AppProvider = ({ children }) => {
         <AppContext.Provider value={{
             state,
             takeInputAndMakeApiCall,
-            incresePage,
+            increasePage,
             decreasePage
         }}>
             {children}

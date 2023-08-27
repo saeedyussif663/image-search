@@ -1,50 +1,47 @@
-import { useNavigate } from "react-router-dom";
 
-import { useState, useEffect } from "react";
+
+import { useState,  useRef } from "react";
 import { useGlobalContext } from "../Context";
 
-const Form = () => {
+const Form = ({ takeData}) => {
     const {  takeInputAndMakeApiCall } = useGlobalContext();
     const [isShowing, setIsShowing] = useState(false);
-    const [userInput, setUserInput] = useState('');
 
-
-    const navigate = useNavigate()
+    const inputRef = useRef('')
     
-    
-    
-    const handleActions = () => {
-        if (userInput.trim() !== '') {
-            setIsShowing(true)
+    const handleChange = (e) => {
+        inputRef.current.value = e.target.value;
+        if (inputRef.current.value.trim() !== '') {
+           setIsShowing(true)
         } else {
             setIsShowing(false)
-        }
-    }
-     const handleChange = (e) =>{
-        setUserInput(e.target.value)
-    }
-
-    useEffect(() => {
-        handleActions();
-    },  [handleChange])
+       }
+  }
 
    
 
     const clearInput = () => {
-        setUserInput('')
+        inputRef.current.value = ''
+        setIsShowing(false)
     }
 
     const sendData = () => {
-        takeInputAndMakeApiCall(userInput);
-        navigate('/search-results');
-        setUserInput('')
+        takeData(inputRef.current.value)
+        takeInputAndMakeApiCall(inputRef.current.value);
+        inputRef.current.value = '';
+        setIsShowing(false);
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        sendData()
     }
 
     return (
-         <form className="w-11/12 mx-auto md:w-3/6 relative">
+         <form className="w-11/12 mx-auto md:w-3/6 relative z-10" onSubmit={handleSubmit}>
                 <input type="text" placeholder="search over 1 million images"
-                    className="rounded-full w-full px-6 py-3 focus:outline-none bg-transparent placeholder:text-white focus:placeholder-transparent border-2 border-white focus:bg-white"
-                    value={userInput}
+                className="rounded-full w-full px-6 py-3 focus:outline-none bg-transparent placeholder:text-white focus:placeholder-transparent border-2 border-white focus:bg-white"
+                    ref={inputRef}
                     onChange={handleChange}
                 />
                 {isShowing &&  
