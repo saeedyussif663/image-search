@@ -9,6 +9,8 @@ const initialState = {
     input: ''
 }
 
+const apikey = process.env.REACT_APP_API_KEY;
+
 const AppContext = createContext();
 
 
@@ -19,7 +21,7 @@ const AppProvider = ({ children }) => {
         dispatch({ type: 'TOGGLELOADING' })
         dispatch({ type: "INCREASEPAGE" });
         const page = state.page + 1
-        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${value}&image_type=photo&page=${page}&per_page=12`
+        const url = `https://pixabay.com/api/?key=${apikey}&q=${value}&image_type=photo&page=${page}&per_page=12`
         const response = await fetch(url);
         const data = await response.json();
         dispatch({ type: "SETDATA", data })
