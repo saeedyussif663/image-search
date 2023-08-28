@@ -26,7 +26,7 @@ const SearchResults = () => {
     return (
         <section className="section-background py-4 min-h-screen flex flex-col">
             <Form takeData={handleRecievedData} />
-           {images.length === 0 && <Home/>}
+           {images.length === 0 && !state.isLoading ? <Home/> : ''}
             {state.isLoading && <Loader />}
            {!state.isLoading && <div className="grid grid-cols-1 gap-3 mt-6  md:grid-cols-3">
                 {images.map((image) => {
