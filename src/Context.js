@@ -9,26 +9,31 @@ const initialState = {
     input: ''
 }
 
-const apikey = process.env.REACT_APP_API_KEY;
+
 
 const AppContext = createContext();
 
 
 const AppProvider = ({ children }) => {
+
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    const increasePage = async (value) => {
-        dispatch({ type: 'TOGGLELOADING' })
-        dispatch({ type: "INCREASEPAGE" });
+    const requestDiffrentPage = async (value) => {
         const page = state.page + 1
-        const url = `https://pixabay.com/api/?key=${apikey}&q=${value}&image_type=photo&page=${page}&per_page=12`
+        const url = `https://pixabay.com/api/?key=39028098-343f95f5e9393b8130e282d9f&q=${value}&image_type=photo&page=${page}&per_page=12`
         const response = await fetch(url);
         const data = await response.json();
-        dispatch({ type: "SETDATA", data })
+        dispatch({ type: "SETDATA", data });
         window.scrollTo({
             top: 0,
             behavior: "smooth"
         });
+    }
+
+    const increasePage = async (value) => {
+        dispatch({ type: 'TOGGLELOADING' })
+        dispatch({ type: "INCREASEPAGE" });
+        requestDiffrentPage(value)
         dispatch({ type: 'TOGGLELOADING' });
     }
 
